@@ -2,6 +2,7 @@
   "name": "wcn_frontend",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8282",
   "dependencies": {
     "@babel/preset-react": "^7.12.10",
     "@material-ui/core": "^4.11.2",
@@ -11,6 +12,8 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "bootstrap": "^4.5.3",
+    "formik": "^2.2.6",
+    "http-proxy-middleware": "^1.0.6",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
