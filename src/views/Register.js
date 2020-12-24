@@ -9,6 +9,10 @@ import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined'
 import Typography from "@material-ui/core/Typography";
 import { makeStyles} from "@material-ui/core";
 import Container from "@material-ui/core/Container";
+import { Formik } from "formik";
+
+import { RegisterRequest} from "../request";
+import FormHelperText from "@material-ui/core/FormHelperText";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -44,77 +48,128 @@ export default function Register() {
                 <Typography component="h1" variant='h5'>
                     Rejestracja
                 </Typography>
-                <form className={classes.form} noValidate={false}>
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Email"
-                        name="email"
-                        autoComplete="email"
-                        autoFocus
-                    />
-                    <TextField
-                        type="password"
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="password"
-                        label="Hasło"
-                        name="password"
-                        autoComplete="current-password"
-                    />
-                    <TextField
-                        type="password2"
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="password2"
-                        label="Potwierdź hasło"
-                        name="password2"
-                        autoComplete="current-password"
-                    />
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="name"
-                        label="Imię"
-                        name="name"
-                        autoComplete="name"
-                    />
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="surname"
-                        label="Nazwisko"
-                        name="surname"
-                        autoComplete="surname"
-                    />
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className={classes.submit}
+                <Formik
+                    initialValues={{email: '', password: '', matchingPassword: '', name: '', surname: ''}}
+                    validate={values => {
+                        const errors = {};
+                        if (!values.email){
+                            errors.email = 'Required';
+                        } else if (
+                            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+                        ) {
+                            errors.email = 'Invalid email address';
+                        }
+                        return errors;
+                    }}
+                    onSubmit={(values, {setSubmitting}) => {
+                        setTimeout(() => {
+                            setSubmitting(false);
+                            RegisterRequest(values);
+                        }, 400);
+                    }}
                     >
-                        Zarejestruj
-                    </Button>
-                    <Grid container>
-                        <Grid item>
-                            <Link href="/login" variant="body2">
-                                {"Masz konto? Zaloguj się!"}
-                            </Link>
-                        </Grid>
-                    </Grid>
-                </form>
+                    {({
+                        values,
+                        errors,
+                        touched,
+                        handleChange,
+                        handleBlur,
+                        handleSubmit,
+                        isSubmitting,
+                    }) => (
+                        <form onSubmit={handleSubmit}>
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email"
+                                name="email"
+                                autoComplete="email"
+                                autoFocus
+                                type="email"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={values.email}
+                            />
+                            <FormHelperText id="email">
+                                {errors.email && touched.email && errors.email}
+                            </FormHelperText>
+                            <TextField
+                                type="password"
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="password"
+                                label="Hasło"
+                                name="password"
+                                autoComplete="current-password"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={values.password}
+                            />
+                            <TextField
+                                type="password"
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="matchingPassword"
+                                label="Potwierdź hasło"
+                                name="matchingPassword"
+                                autoComplete="current-matching-password"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={values.matchingPassword}
+                            />
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="name"
+                                label="Imię"
+                                name="name"
+                                autoComplete="name"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={values.name}
+                            />
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="surname"
+                                label="Nazwisko"
+                                name="surname"
+                                autoComplete="surname"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={values.surname}
+                            />
+                            <Button
+                                type="submit"
+                                disabled={isSubmitting}
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                className={classes.submit}
+                            >
+                                Zarejestruj
+                            </Button>
+                            <Grid container>
+                                <Grid item>
+                                    <Link href="/login" variant="body2">
+                                        {"Masz konto? Zaloguj się!"}
+                                    </Link>
+                                </Grid>
+                            </Grid>
+                        </form>
+                    )}
+                </Formik>
             </div>
         </Container>
     );

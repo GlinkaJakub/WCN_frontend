@@ -10,6 +10,8 @@ import Main from './Main';
 // import Login from "./Login";
 import Login2 from "./Login2";
 import Register from './Register';
+import AddGroup from "./AddGroup";
+import Groups from "./Groups";
 
 // const auth = false;
 
@@ -19,6 +21,8 @@ const Root = () => (
         <BrowserRouter>
             <Switch>
                 <Route exact path="/" component={Main} />
+                <Route exact path="/addGroup" component={AddGroup} />
+                <Route exact path="/groups" component={Groups} />
                 {/*<Route exact path="/login" component={Login} />*/}
                 <Route exact path="/login" component={Login2} />
                 <Route exact path="/register" component={Register} />

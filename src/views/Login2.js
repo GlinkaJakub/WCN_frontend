@@ -10,9 +10,9 @@ import Typography from "@material-ui/core/Typography";
 import {makeStyles} from "@material-ui/core";
 import Container from "@material-ui/core/Container";
 import FormHelperText from "@material-ui/core/FormHelperText";
-import {Formik, Form, Field, ErrorMessage} from "formik";
+import {Formik} from "formik";
 
-import LoginRequest from "../request";
+import { LoginRequest } from "../request";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -121,7 +121,7 @@ export default function Login() {
                             color="primary"
                             className={classes.submit}
                         >
-                            Submit
+                            Zaloguj
                         </Button>
                         <Grid container>
                             <Grid item>

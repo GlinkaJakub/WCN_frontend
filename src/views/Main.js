@@ -1,7 +1,11 @@
 import React from 'react';
+import TableMaterial from "../components/atoms/TableMaterial";
 
-const Main = () => (
-    <h1>Main page</h1>
-);
+const Main = () => {
+
+    return (
+        <TableMaterial/>
+    )
+};
 
 export default Main;
