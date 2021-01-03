@@ -26,14 +26,30 @@ export default function ButtonAppBar() {
         <div className={classes.root}>
             <AppBar position="static">
                 <Toolbar>
-                    <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
+                    <IconButton href="/" edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" className={classes.title}>
                         News
                     </Typography>
-                    <Button color="inherit" href="/register">Rejestracja</Button>
-                    <Button color="inherit" href="/login">Login</Button>
+                    {localStorage.getItem('jwt').length > 7 &&
+                        <>
+                            <Button color="inherit" href="/groups">Grupy</Button>
+                            <Button color="inherit" href="/" onClick={() => {
+                                    localStorage.setItem('jwt', '');
+                                    localStorage.setItem('user', '');
+                                }
+                            }>
+                                Wyloguj
+                            </Button>
+                        </>
+                    }
+                    {localStorage.getItem('jwt').length < 7 &&
+                    <>
+                        <Button color="inherit" href="/register">Rejestracja</Button>
+                        <Button color="inherit" href="/login">Login</Button>
+                    </>
+                    }
                 </Toolbar>
             </AppBar>
         </div>

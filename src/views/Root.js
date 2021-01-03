@@ -7,6 +7,7 @@ import Navbar from "../components/molecules/Navbar";
 // import Pagination from "../components/atoms/Pagination";
 // import DataTable from "../components/molecules/DataTable";
 import Main from './Main';
+import ProtectedRoute from "../components/atoms/ProtectedRoute";
 // import Login from "./Login";
 import Login2 from "./Login2";
 import Register from './Register';
@@ -21,8 +22,8 @@ const Root = () => (
         <BrowserRouter>
             <Switch>
                 <Route exact path="/" component={Main} />
-                <Route exact path="/addGroup" component={AddGroup} />
-                <Route exact path="/groups" component={Groups} />
+                <ProtectedRoute exact path="/addGroup" component={AddGroup} />
+                <ProtectedRoute exact path="/groups" component={Groups} />
                 {/*<Route exact path="/login" component={Login} />*/}
                 <Route exact path="/login" component={Login2} />
                 <Route exact path="/register" component={Register} />

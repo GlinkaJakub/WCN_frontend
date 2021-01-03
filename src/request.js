@@ -15,7 +15,6 @@ export const LoginRequest = (data) => {
                 // console.log(token);
                 localStorage.setItem('jwt', token);
                 localStorage.setItem('user', data.email);
-                console.log("token storage: " + localStorage.getItem('jwt'))
             }
     })
 }
@@ -48,6 +47,15 @@ export async function getAllJournals ({page, sortColumn, direction, setFetchedDa
         });
 }
 
+export async function getSearchingJournals ({page, sortColumn, direction, setFetchedData}, searchWord) {
+
+    await fetch('/api/journals/word?word=' + searchWord + '&page=' + page + '&column=' + sortColumn + '&direction=' + direction)
+        .then((response) => response.json())
+        .then((response) => {
+            setFetchedData(response);
+        });
+}
+
 export const AddGroupRequest = (data) => {
     const requestOptions = {
         method: 'POST',
@@ -69,6 +77,24 @@ export const AddGroupRequest = (data) => {
         })
 }
 
+export function deleteGroup (groupId){
+
+    const requestOptions = {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('jwt')
+        }
+    }
+
+    fetch('/api/groups/' + groupId, requestOptions)
+        .then((response) => {
+            if (response.status === 200){
+                alert("usunięto");
+            }
+        })
+}
+
 export async function getGroupsByUser (setFetchedData) {
 
     const requestOptions = {
@@ -79,11 +105,100 @@ export async function getGroupsByUser (setFetchedData) {
         }
     }
 
-    await fetch('/api//users/groups', requestOptions)
+    await fetch('/api/users/groups', requestOptions)
         .then((response) => response.json())
         .then((response) => {
-            console.log("Grupki xD");
             setFetchedData(response);
-            console.log("Po grupkach xD");
+        });
+}
+
+export async function getSimpleGroupsByUser (setFetchedData) {
+
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('jwt')
+        }
+    }
+
+    await fetch('/api/users/groups/names', requestOptions)
+        .then((response) => response.json())
+        .then((response) => {
+            setFetchedData(response);
+        });
+}
+
+export function deleteJournalFromGroup (groupId, journalId) {
+
+    const requestOptions = {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('jwt')
+        }
+    }
+
+    fetch('/api/groups/' + groupId + '/journals/' + journalId, requestOptions)
+        .then((response) => {
+            if(response.status === 200){
+                console.log("deleteJournal( {} ) From Group ( {} )", journalId, groupId)
+            }
+        });
+}
+
+export function addJournalToGroup (groupId, journalId) {
+
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('jwt')
+        }
+    }
+
+    fetch('/api/groups/' + groupId + '/journals/' + journalId, requestOptions)
+        .then((response) => {
+            if(response.status === 200){
+                console.log("deleteJournal( {} ) From Group ( {} )", journalId, groupId)
+            }
+        });
+}
+
+export function deleteUserFromGroup (groupId, userId) {
+
+    const requestOptions = {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('jwt')
+        }
+    }
+
+    fetch('/api/groups/' + groupId + '/users/' + userId, requestOptions)
+        .then((response) => {
+            if(response.status === 200){
+                console.log("delete users( {} ) From Group ( {} )", userId, groupId)
+            }
+        });
+}
+
+export function addUserToGroup (email, groupId) {
+
+    console.log("added user( ", email, " ) From Group (", groupId, ")")
+
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('jwt')
+        }
+    }
+
+    fetch('/api/groups/' + groupId + '/users/' + email, requestOptions)
+        .then((response) => {
+            if(response.status === 200){
+                console.log("added user( {} ) From Group ( {} )", email, groupId)
+            }
         });
 }

@@ -11,8 +11,10 @@ import IconButton from "@material-ui/core/IconButton";
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import TablePagination from "@material-ui/core/TablePagination";
-import {getAllJournals} from "../../request";
+import {getAllJournals, getSearchingJournals} from "../../request";
 import Button from "@material-ui/core/Button";
+import AddJournalToGroup from "./AddJournalToGroup";
+import SearchInput from "./SerachInput";
 
 const columns = [
     {id: 'id', label: 'ID', minWidth: '10', align: 'left'},
@@ -43,10 +45,12 @@ const TableMaterial = ({headerTitle}) => {
     const [direction, setDirection] = React.useState('ASC');
     const [sortColumn, setSortColumn] = React.useState('id');
     const [fetchData, setFetchedData] = React.useState({});
+    const [searchWord, setSearchWord] = React.useState('');
 
     React.useEffect(() => {
-        getAllJournals({page, sortColumn, direction, setFetchedData});
-    }, [page]);
+        // getAllJournals({page, sortColumn, direction, setFetchedData});
+        getSearchingJournals({page, sortColumn, direction, setFetchedData}, searchWord);
+    }, [page, searchWord]);
 
     function handleChangePage(event, newPage) {
         setPage(newPage);
@@ -55,12 +59,20 @@ const TableMaterial = ({headerTitle}) => {
     function handleSortBy(column, directionParam) {
         setSortColumn(column);
         setDirection(directionParam);
-        getAllJournals({page, sortColumn, direction, setFetchedData});
+        getSearchingJournals({page, sortColumn, direction, setFetchedData}, searchWord);
+        // getAllJournals({page, sortColumn, direction, setFetchedData});
     }
 
     return (
         <Paper className={classes.root}>
             <h1 align="center">{headerTitle}</h1>
+            <SearchInput
+                page={page}
+                sortColumn={sortColumn}
+                direction={direction}
+                setFetchedData={setFetchedData}
+                setSearchWord={setSearchWord}
+            />
             <TableContainer className={classes.container}>
                 <Table stickyHeader aria-label="sticky table">
                     <TableHead>
@@ -90,6 +102,11 @@ const TableMaterial = ({headerTitle}) => {
                                     </span>
                                 </TableCell>
                             ))}
+                            {localStorage.getItem('jwt').length > 7 &&
+                            <TableCell key="addJournal" align="right">
+                                Dodaj
+                            </TableCell>
+                            }
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -114,6 +131,11 @@ const TableMaterial = ({headerTitle}) => {
                                             </TableCell>
                                         );
                                     })}
+                                    {localStorage.getItem('jwt').length > 7 &&
+                                        <TableCell key="addJournal" align="right">
+                                            <AddJournalToGroup journalId={row.id} />
+                                        </TableCell>
+                                    }
                                 </TableRow>
                             );
                         })}

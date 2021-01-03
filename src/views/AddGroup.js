@@ -5,12 +5,9 @@ import Avatar from "@material-ui/core/Avatar";
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 import Typography from "@material-ui/core/Typography";
 import {Formik} from "formik";
-import {AddGroupRequest, LoginRequest} from "../request";
+import {AddGroupRequest} from "../request";
 import TextField from "@material-ui/core/TextField";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
 
 const useStyles = makeStyles((theme) => ({

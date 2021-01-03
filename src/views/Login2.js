@@ -13,6 +13,7 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import {Formik} from "formik";
 
 import { LoginRequest } from "../request";
+import {Redirect} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -37,6 +38,10 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Login() {
     const classes = useStyles();
+
+    if (localStorage.getItem('jwt').length > 7) {
+        return <Redirect to='/groups' />
+    }
 
     return (
         <Container consponent="main" maxWidth="xs">
