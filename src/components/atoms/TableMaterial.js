@@ -11,10 +11,11 @@ import IconButton from "@material-ui/core/IconButton";
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import TablePagination from "@material-ui/core/TablePagination";
-import {getAllJournals, getSearchingJournals} from "../../request";
+import {getAllJournals, getAllJournalsByCategory, getSearchingJournals} from "../../request";
 import Button from "@material-ui/core/Button";
 import AddJournalToGroup from "./AddJournalToGroup";
 import SearchInput from "./SerachInput";
+import ChooseCategory from "./ChooseCategory";
 
 const columns = [
     {id: 'id', label: 'ID', minWidth: '10', align: 'left'},
@@ -46,11 +47,21 @@ const TableMaterial = ({headerTitle}) => {
     const [sortColumn, setSortColumn] = React.useState('id');
     const [fetchData, setFetchedData] = React.useState({});
     const [searchWord, setSearchWord] = React.useState('');
+    const [categoryId, setCategoryId] = React.useState(8);
+    const [isCategory, setIsCategory] = React.useState(0);
 
     React.useEffect(() => {
+            if (isCategory === 1){
+                getAllJournalsByCategory({page, sortColumn, direction, setFetchedData}, categoryId, setSearchWord);
+                console.log("by category");
+            } else if (isCategory === 0) {
+                getSearchingJournals({page, sortColumn, direction, setFetchedData}, searchWord);
+                console.log("by word");
+            }
+            console.log("isCategory ", isCategory);
+            console.log("page (" + page + ") \n sort (" + sortColumn + ") \n direction (" + direction + ") \n word (\'" + searchWord + "\') \n categoryId (" + categoryId + ")")
         // getAllJournals({page, sortColumn, direction, setFetchedData});
-        getSearchingJournals({page, sortColumn, direction, setFetchedData}, searchWord);
-    }, [page, searchWord]);
+    }, [page, direction, sortColumn, searchWord, categoryId]);
 
     function handleChangePage(event, newPage) {
         setPage(newPage);
@@ -59,7 +70,7 @@ const TableMaterial = ({headerTitle}) => {
     function handleSortBy(column, directionParam) {
         setSortColumn(column);
         setDirection(directionParam);
-        getSearchingJournals({page, sortColumn, direction, setFetchedData}, searchWord);
+        // getSearchingJournals({page, sortColumn, direction, setFetchedData}, searchWord);
         // getAllJournals({page, sortColumn, direction, setFetchedData});
     }
 
@@ -72,7 +83,19 @@ const TableMaterial = ({headerTitle}) => {
                 direction={direction}
                 setFetchedData={setFetchedData}
                 setSearchWord={setSearchWord}
+                setIsCategory={setIsCategory}
+                isCategory={isCategory}
             />
+            <ChooseCategory
+                page={page}
+                sortColumn={sortColumn}
+                direction={direction}
+                setFetchedData={setFetchedData}
+                setSearchWord={setSearchWord}
+                setCategoryId={setCategoryId}
+                setIsCategory={setIsCategory}
+                categoryId={categoryId}
+                />
             <TableContainer className={classes.container}>
                 <Table stickyHeader aria-label="sticky table">
                     <TableHead>
@@ -84,22 +107,26 @@ const TableMaterial = ({headerTitle}) => {
                                     align={column.align}
                                 >
                                     {column.label}
+                                    {column.id !== 'categories' &&
                                     <span>
-                                        <Button className={classes.button} onClick={() => {
+                                        <Button size="small"
+                                                className={classes.button} onClick={() => {
                                             handleSortBy(column.id, "ASC");
                                         }}>
-                                            <IconButton aria-label="direction" size="small">
-                                                <ArrowDropDownIcon fontSize="small" />
-                                            </IconButton>
+                                            {/*<IconButton aria-label="direction" size="small">*/}
+                                            <ArrowDropDownIcon fontSize="small"/>
+                                            {/*</IconButton>*/}
                                         </Button>
-                                        <Button className={classes.button} onClick={() => {
+                                        <Button size="small"
+                                                className={classes.button} onClick={() => {
                                             handleSortBy(column.id, "DESC");
                                         }}>
-                                            <IconButton aria-label="direction" size="small" >
-                                                <ArrowDropUpIcon fontSize="small" />
-                                            </IconButton>
+                                        {/*<IconButton aria-label="direction" size="small" >*/}
+                                            <ArrowDropUpIcon fontSize="small"/>
+                                            {/*</IconButton>*/}
                                         </Button>
                                     </span>
+                                    }
                                 </TableCell>
                             ))}
                             {localStorage.getItem('jwt').length > 7 &&
@@ -123,7 +150,22 @@ const TableMaterial = ({headerTitle}) => {
                                             })
                                             value = cat;
                                         } else {
-                                            value = row[column.id];
+                                            if (column.id === 'title1' && row['title2'] !== ''){
+                                               value = row['title1'] + " \n\n\n (" + row['title2'] + ")";
+                                            } else if (column.id === 'title1' && row['title2'] === ''){
+                                                value = row['title1'];
+                                            } else  if (column.id === 'issn1' && row['issn2'] !== ''){
+                                                value = row['issn1'] + " \n (" + row['issn2'] + ")";
+                                            } else if (column.id === 'issn1' && row['issn2'] === ''){
+                                                value = row['issn1'];
+                                            } else  if (column.id === 'eissn1' && row['eissn2'] !== ''){
+                                                value = row['eissn1'] + " \n (" + row['eissn2'] + ")";
+                                            } else if (column.id === 'eissn1' && row['eissn2'] === ''){
+                                                value = row['eissn1'];
+                                            } else {
+                                                value = row[column.id];
+                                                // console.log(column.id);
+                                            }
                                         }
                                         return (
                                             <TableCell key={column.id} align={column.align}>
@@ -132,9 +174,9 @@ const TableMaterial = ({headerTitle}) => {
                                         );
                                     })}
                                     {localStorage.getItem('jwt').length > 7 &&
-                                        <TableCell key="addJournal" align="right">
-                                            <AddJournalToGroup journalId={row.id} />
-                                        </TableCell>
+                                    <TableCell key="addJournal" align="right">
+                                        <AddJournalToGroup journalId={row.id}/>
+                                    </TableCell>
                                     }
                                 </TableRow>
                             );

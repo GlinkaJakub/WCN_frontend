@@ -202,3 +202,31 @@ export function addUserToGroup (email, groupId) {
             }
         });
 }
+
+export async function getAllCategories (setCategoriesData) {
+
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    }
+
+    await fetch('/api/categories', requestOptions)
+        .then((response) => response.json())
+        .then((response) => {
+            console.log(response);
+            setCategoriesData(response);
+        });
+}
+
+export async function getAllJournalsByCategory ({page, sortColumn, direction, setFetchedData}, categoryId, setSearchWord) {
+    console.log("categoryID: ", categoryId);
+
+    await fetch('/api/categories/' + categoryId + '/journals?page=' + page + '&column=' + sortColumn + '&direction=' + direction)
+        .then((response) => response.json())
+        .then((response) => {
+            setSearchWord('');
+            setFetchedData(response);
+        });
+}

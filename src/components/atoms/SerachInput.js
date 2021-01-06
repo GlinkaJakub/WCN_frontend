@@ -27,9 +27,12 @@ const useStyles = makeStyles((theme) => ({
         {
             margin: theme.spacing(3, 0, 2),
         },
+    search: {
+        marginLeft: theme.spacing(2),
+    }
 }));
 
-const SearchInput = ({page, sortColumn, direction, setFetchedData, setSearchWord}) => {
+const SearchInput = ({page, sortColumn, direction, setFetchedData, setSearchWord, setIsCategory, isCategory}) => {
     const classes = useStyles();
 
     return (
@@ -37,8 +40,10 @@ const SearchInput = ({page, sortColumn, direction, setFetchedData, setSearchWord
             initialValues={{search: ''}}
             onSubmit={((values, {setSubmitting}) => {
                 setTimeout(() => {
+                    setIsCategory(0);
                     console.log(values.search);
                     setSearchWord(values.search);
+                    console.log("isCat in search ", isCategory);
                     // getSearchingJournals({page, sortColumn, direction, setFetchedData}, values.search);
                     setSubmitting(false);
                 })
@@ -46,15 +51,22 @@ const SearchInput = ({page, sortColumn, direction, setFetchedData, setSearchWord
             >
             {formik => (
             <form onSubmit={formik.handleSubmit}>
-                <label htmlFor="search">Szukaj</label>
-                <input
+                {/*<label htmlFor="search"></label>*/}
+                <TextField
                     id="search"
                     name="search"
                     type="text"
                     onChange={formik.handleChange}
                     value={formik.values.search}
+                    label="Wpisz frazę..."
                 />
-                <button type="submit">Szukaj</button>
+                <Button
+                    variant="outlined"
+                    type="submit"
+                    color="primary"
+                >
+                    Szukaj
+                </Button>
             </form>
             )}
         </Formik>
