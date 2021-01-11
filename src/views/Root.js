@@ -13,22 +13,27 @@ import Login2 from "./Login2";
 import Register from './Register';
 import AddGroup from "./AddGroup";
 import Groups from "./Groups";
+import {AuthProvider} from "../auth/AuthProvider";
+import {CssBaseline} from "@material-ui/core";
 
 // const auth = false;
 
 const Root = () => (
     <>
-        <Navbar />
-        <BrowserRouter>
-            <Switch>
-                <Route exact path="/" component={Main} />
-                <ProtectedRoute exact path="/addGroup" component={AddGroup} />
-                <ProtectedRoute exact path="/groups" component={Groups} />
-                {/*<Route exact path="/login" component={Login} />*/}
-                <Route exact path="/login" component={Login2} />
-                <Route exact path="/register" component={Register} />
-            </Switch>
-        </BrowserRouter>
+        <AuthProvider>
+            <Navbar />
+            <CssBaseline />
+            <BrowserRouter>
+                <Switch>
+                    <Route exact path="/" component={Main} />
+                    <ProtectedRoute exact path="/addGroup" component={AddGroup} />
+                    <ProtectedRoute exact path="/groups" component={Groups} />
+                    {/*<Route exact path="/login" component={Login} />*/}
+                    <Route exact path="/login" component={Login2} />
+                    <Route exact path="/register" component={Register} />
+                </Switch>
+            </BrowserRouter>
+        </AuthProvider>
         {/*<DataTable />*/}
         {/*<Table />*/}
         {/*<Pagination />*/}

@@ -15,8 +15,10 @@ export const LoginRequest = (data) => {
                 // console.log(token);
                 localStorage.setItem('jwt', token);
                 localStorage.setItem('user', data.email);
+                return token;
             }
-    })
+            return 'bad request';
+        })
 }
 
 export const RegisterRequest = (data) => {

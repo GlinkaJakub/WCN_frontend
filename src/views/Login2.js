@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState} from 'react';
+import { useHistory } from 'react-router-dom';
 import Avatar from "@material-ui/core/Avatar";
 import Button from '@material-ui/core/Button';
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -14,6 +15,7 @@ import {Formik} from "formik";
 
 import { LoginRequest } from "../request";
 import {Redirect} from "react-router-dom";
+import {useAuth} from "../auth/AuthProvider";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -38,6 +40,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Login() {
     const classes = useStyles();
+    const [errorMessage, setErrorMessage] = useState("");
+    const history = useHistory();
+    const {login, isAuthenticated} = useAuth();
 
     if (localStorage.getItem('jwt').length > 7) {
         return <Redirect to='/groups' />
@@ -68,7 +73,18 @@ export default function Login() {
             }}
                 onSubmit={(values, {setSubmitting}) => {
                 setTimeout(() => {
-                    // alert(JSON.stringify(values, null, 2));
+                    try {
+                        const response = login(values.email, values.password);
+                        if (response.status === 200){
+                            setErrorMessage("");
+                            history.push("/groups");
+                        }
+                        if (response.status === 401){
+                            setErrorMessage("Invalid login credentials")
+                        }
+                    } catch (error) {
+                        console.error(error);
+                    }
                     setSubmitting(false);
                     LoginRequest(values);
                 }, 400);
@@ -128,6 +144,7 @@ export default function Login() {
                         >
                             Zaloguj
                         </Button>
+                        {errorMessage && <Typography>{errorMessage}</Typography>}
                         <Grid container>
                             <Grid item>
                                 <Link href="/register" variant="body2">
