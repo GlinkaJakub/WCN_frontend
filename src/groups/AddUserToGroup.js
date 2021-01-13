@@ -10,16 +10,20 @@ import {
     TextField,
     makeStyles
 } from "@material-ui/core";
-import {addUserToGroup} from "../../request";
+import {addUserToGroup} from "../request";
 import {Formik} from "formik";
 
-const AddUserToGroup = ({groupId}) =>  {
+const AddUserToGroup = ({groupId, setChanged, isChanged}) =>  {
 
     const useStyles = makeStyles((theme) => ({
         submit:
             {
                 margin: theme.spacing(3, 0, 2),
             },
+        menuButton: {
+            marginRight: theme.spacing(2),
+            marginLeft: theme.spacing(2),
+        },
     }));
 
     const classes = useStyles();
@@ -35,14 +39,18 @@ const AddUserToGroup = ({groupId}) =>  {
     }
 
     const handleAddUserClose = ( email) => {
+        if (isChanged === true){
+            setChanged(false);
+        }
         console.log("Dodano {} go grupy {}", email, groupId);
-        addUserToGroup(email, groupId);
+        addUserToGroup(email, groupId, setChanged);
+        setChanged(false);
         setOpen(false);
     }
 
     return (
         <Box>
-            <Button color="primary" onClick={() => handleOpen()}>
+            <Button className={classes.menuButton} variant="outlined" color="primary" onClick={() => handleOpen()}>
                 Dodaj użytkownika
             </Button>
             <Dialog open={open} onClose={() => handleClose()} aria-labelledby="form-dialog-title">

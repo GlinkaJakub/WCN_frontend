@@ -13,6 +13,7 @@ import { Formik } from "formik";
 
 import { RegisterRequest} from "../request";
 import FormHelperText from "@material-ui/core/FormHelperText";
+import {useHistory} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -37,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Register() {
     const classes = useStyles();
+    const history = useHistory();
 
     return (
         <Container consponent="main" maxWidth="xs">
@@ -65,6 +67,7 @@ export default function Register() {
                         setTimeout(() => {
                             setSubmitting(false);
                             RegisterRequest(values);
+                            history.push("/login");
                         }, 400);
                     }}
                     >

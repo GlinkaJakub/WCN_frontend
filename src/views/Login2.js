@@ -13,10 +13,6 @@ import Container from "@material-ui/core/Container";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import {Formik} from "formik";
 
-import { LoginRequest } from "../request";
-import {Redirect} from "react-router-dom";
-import {useAuth} from "../auth/AuthProvider";
-
 const useStyles = makeStyles((theme) => ({
     paper: {
         marginTop: theme.spacing(8),
@@ -38,15 +34,10 @@ const useStyles = makeStyles((theme) => ({
         },
 }));
 
-export default function Login() {
+export default function Login({login}) {
     const classes = useStyles();
     const [errorMessage, setErrorMessage] = useState("");
     const history = useHistory();
-    const {login, isAuthenticated} = useAuth();
-
-    if (localStorage.getItem('jwt').length > 7) {
-        return <Redirect to='/groups' />
-    }
 
     return (
         <Container consponent="main" maxWidth="xs">
@@ -73,20 +64,11 @@ export default function Login() {
             }}
                 onSubmit={(values, {setSubmitting}) => {
                 setTimeout(() => {
-                    try {
-                        const response = login(values.email, values.password);
-                        if (response.status === 200){
-                            setErrorMessage("");
-                            history.push("/groups");
-                        }
-                        if (response.status === 401){
-                            setErrorMessage("Invalid login credentials")
-                        }
-                    } catch (error) {
-                        console.error(error);
-                    }
                     setSubmitting(false);
-                    LoginRequest(values);
+                    // LoginRequest(values);
+                    login(values, history, setErrorMessage);
+                    history.push("/groups");
+                    console.log("error", errorMessage);
                 }, 400);
             }}
                 >

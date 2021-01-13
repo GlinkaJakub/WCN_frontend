@@ -1,4 +1,4 @@
-export const LoginRequest = (data) => {
+export async function LoginRequest (data) {
 
     const requestOptions = {
         method: 'POST',
@@ -8,17 +8,7 @@ export const LoginRequest = (data) => {
         body: JSON.stringify(data)
     }
 
-    fetch('/login', requestOptions)
-        .then((response) => {
-            if (response.ok){
-                const token = response.headers.get('Authorization').toString();
-                // console.log(token);
-                localStorage.setItem('jwt', token);
-                localStorage.setItem('user', data.email);
-                return token;
-            }
-            return 'bad request';
-        })
+    return fetch('/login', requestOptions);
 }
 
 export const RegisterRequest = (data) => {
@@ -36,6 +26,31 @@ export const RegisterRequest = (data) => {
             if (response.ok){
                 console.log("add user");
                 //show sucessfull register and navigate to link
+            }
+        })
+}
+
+export function changePassword (data, setErrorMessage){
+    const requestOptions = {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('jwt')
+        },
+        body: JSON.stringify(data)
+    }
+
+    fetch('/api/users/', requestOptions)
+        .then((response) => {
+            if (response.status === 200){
+                setErrorMessage("changed password, status: " + response.statusText);
+                console.log("changed password");
+            } else if(response.status === 409){
+                // alert("Wrong password");
+                setErrorMessage("Wrong password");
+            } else if (response.status === 401){
+                localStorage.removeItem("jwt");
+                localStorage.removeItem("user");
             }
         })
 }
@@ -79,7 +94,7 @@ export const AddGroupRequest = (data) => {
         })
 }
 
-export function deleteGroup (groupId){
+export function deleteGroup (groupId, setChanged){
 
     const requestOptions = {
         method: 'DELETE',
@@ -92,7 +107,8 @@ export function deleteGroup (groupId){
     fetch('/api/groups/' + groupId, requestOptions)
         .then((response) => {
             if (response.status === 200){
-                alert("usunięto");
+                console.log("usunięto");
+                setChanged(true);
             }
         })
 }
@@ -131,7 +147,7 @@ export async function getSimpleGroupsByUser (setFetchedData) {
         });
 }
 
-export function deleteJournalFromGroup (groupId, journalId) {
+export function deleteJournalFromGroup (groupId, journalId, setChanged) {
 
     const requestOptions = {
         method: 'DELETE',
@@ -145,6 +161,7 @@ export function deleteJournalFromGroup (groupId, journalId) {
         .then((response) => {
             if(response.status === 200){
                 console.log("deleteJournal( {} ) From Group ( {} )", journalId, groupId)
+                setChanged(true);
             }
         });
 }
@@ -167,7 +184,7 @@ export function addJournalToGroup (groupId, journalId) {
         });
 }
 
-export function deleteUserFromGroup (groupId, userId) {
+export function deleteUserFromGroup (groupId, userId, setChanged) {
 
     const requestOptions = {
         method: 'DELETE',
@@ -181,11 +198,31 @@ export function deleteUserFromGroup (groupId, userId) {
         .then((response) => {
             if(response.status === 200){
                 console.log("delete users( {} ) From Group ( {} )", userId, groupId)
+                setChanged(true);
             }
         });
 }
 
-export function addUserToGroup (email, groupId) {
+export function deleteMyselfFromGroup (groupId, setChanged) {
+
+    const requestOptions = {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('jwt')
+        }
+    }
+
+    fetch('/api/groups/' + groupId + '/users/', requestOptions)
+        .then((response) => {
+            if(response.status === 200){
+                console.log("delete users( {} ) From Group ( {} )", groupId)
+                setChanged(true);
+            }
+        });
+}
+
+export function addUserToGroup (email, groupId, setChanged) {
 
     console.log("added user( ", email, " ) From Group (", groupId, ")")
 
@@ -201,6 +238,7 @@ export function addUserToGroup (email, groupId) {
         .then((response) => {
             if(response.status === 200){
                 console.log("added user( {} ) From Group ( {} )", email, groupId)
+                setChanged(true);
             }
         });
 }

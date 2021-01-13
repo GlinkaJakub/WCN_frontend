@@ -7,23 +7,22 @@ import TableBody from "@material-ui/core/TableBody";
 import Table from "@material-ui/core/Table";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
-import IconButton from "@material-ui/core/IconButton";
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import TablePagination from "@material-ui/core/TablePagination";
-import {getAllJournals, getAllJournalsByCategory, getSearchingJournals} from "../../request";
+import { getAllJournalsByCategory, getSearchingJournals } from "../../request";
 import Button from "@material-ui/core/Button";
-import AddJournalToGroup from "./AddJournalToGroup";
+import AddJournalToGroup from "../../groups/AddJournalToGroup";
 import SearchInput from "./SerachInput";
 import ChooseCategory from "./ChooseCategory";
 
 const columns = [
-    {id: 'id', label: 'ID', minWidth: '10', align: 'left'},
-    {id: 'title1', label: 'Tytuł', minWidth: '300', align: 'left'},
-    {id: 'issn1', label: 'ISSN', minWidth: '150', align: 'left'},
-    {id: 'eissn1', label: 'EISSN', minWidth: '150', align: 'left'},
-    {id: 'points', label: 'Punkty', minWidth: '100', align: 'left'},
-    {id: 'categories', label: 'Dyscypliny', minWidth: '300', align: 'left'},
+    {id: 'id', label: 'ID', minWidth: '5%', align: 'left'},
+    {id: 'title1', label: 'Tytuł', minWidth: '37%', align: 'left'},
+    {id: 'issn1', label: 'ISSN', minWidth: '6%', align: 'left'},
+    {id: 'eissn1', label: 'EISSN', minWidth: '6%', align: 'left'},
+    {id: 'points', label: 'Punkty', minWidth: '7%', align: 'left'},
+    {id: 'categories', label: 'Dyscypliny', minWidth: '37%', align: 'left'},
 ];
 
 const useStyles = makeStyles({
@@ -35,10 +34,14 @@ const useStyles = makeStyles({
     },
     button: {
         width: "20px",
+        minWidth: "20px",
+        maxWidth: "20px",
+        padding: 0,
+        margin: 0,
     }
 });
 
-const TableMaterial = ({headerTitle}) => {
+const TableMaterial = ({isAuthenticated}) => {
 
     const classes = useStyles();
 
@@ -47,19 +50,19 @@ const TableMaterial = ({headerTitle}) => {
     const [sortColumn, setSortColumn] = React.useState('id');
     const [fetchData, setFetchedData] = React.useState({});
     const [searchWord, setSearchWord] = React.useState('');
-    const [categoryId, setCategoryId] = React.useState(8);
+    const [categoryId, setCategoryId] = React.useState(1);
     const [isCategory, setIsCategory] = React.useState(0);
 
     React.useEffect(() => {
-            if (isCategory === 1){
+            if (isCategory === 1 ){
                 getAllJournalsByCategory({page, sortColumn, direction, setFetchedData}, categoryId, setSearchWord);
                 console.log("by category");
-            } else if (isCategory === 0) {
+            } else if (isCategory === 0 ) {
                 getSearchingJournals({page, sortColumn, direction, setFetchedData}, searchWord);
                 console.log("by word");
             }
-            console.log("isCategory ", isCategory);
-            console.log("page (" + page + ") \n sort (" + sortColumn + ") \n direction (" + direction + ") \n word (\'" + searchWord + "\') \n categoryId (" + categoryId + ")")
+            // console.log("isCategory ", isCategory);
+            // console.log("page (" + page + ") \n sort (" + sortColumn + ") \n direction (" + direction + ") \n word (\'" + searchWord + "\') \n categoryId (" + categoryId + ")")
         // getAllJournals({page, sortColumn, direction, setFetchedData});
     }, [page, direction, sortColumn, searchWord, categoryId]);
 
@@ -76,7 +79,7 @@ const TableMaterial = ({headerTitle}) => {
 
     return (
         <Paper className={classes.root}>
-            <h1 align="center">{headerTitle}</h1>
+            {/*<h1 align="center">Wykaz czasopism naukowych MNiSW 2019</h1>*/}
             <SearchInput
                 page={page}
                 sortColumn={sortColumn}
@@ -105,10 +108,12 @@ const TableMaterial = ({headerTitle}) => {
                                     className={column.id}
                                     key={column.id}
                                     align={column.align}
+                                    style={{ width: column.minWidth }}
                                 >
+                                    <span>
                                     {column.label}
                                     {column.id !== 'categories' &&
-                                    <span>
+                                        <>
                                         <Button size="small"
                                                 className={classes.button} onClick={() => {
                                             handleSortBy(column.id, "ASC");
@@ -123,13 +128,15 @@ const TableMaterial = ({headerTitle}) => {
                                         }}>
                                         {/*<IconButton aria-label="direction" size="small" >*/}
                                             <ArrowDropUpIcon fontSize="small"/>
+
                                             {/*</IconButton>*/}
                                         </Button>
-                                    </span>
+                                        </>
                                     }
+                                    </span>
                                 </TableCell>
                             ))}
-                            {localStorage.getItem('jwt').length > 7 &&
+                            {isAuthenticated &&
                             <TableCell key="addJournal" align="right">
                                 Dodaj
                             </TableCell>
@@ -151,15 +158,18 @@ const TableMaterial = ({headerTitle}) => {
                                             value = cat;
                                         } else {
                                             if (column.id === 'title1' && row['title2'] !== ''){
-                                               value = row['title1'] + " \n\n\n (" + row['title2'] + ")";
+                                               // value = row['title1'] + " \n\n\n (" + row['title2'] + ")";
+                                                value = <><div>{row['title1']}</div> <div>({row['title2']})</div></>;
                                             } else if (column.id === 'title1' && row['title2'] === ''){
                                                 value = row['title1'];
                                             } else  if (column.id === 'issn1' && row['issn2'] !== ''){
-                                                value = row['issn1'] + " \n (" + row['issn2'] + ")";
+                                                // value = row['issn1'] + " \n (" + row['issn2'] + ")";
+                                                value = <><div>{row['issn1']}</div> <div>({row['issn2']})</div></>;
                                             } else if (column.id === 'issn1' && row['issn2'] === ''){
                                                 value = row['issn1'];
                                             } else  if (column.id === 'eissn1' && row['eissn2'] !== ''){
-                                                value = row['eissn1'] + " \n (" + row['eissn2'] + ")";
+                                                // value = row['eissn1'] + " \n (" + row['eissn2'] + ")";
+                                                value = <><div>{row['eissn1']}</div> <div>({row['eissn2']})</div></>;
                                             } else if (column.id === 'eissn1' && row['eissn2'] === ''){
                                                 value = row['eissn1'];
                                             } else {
@@ -173,7 +183,7 @@ const TableMaterial = ({headerTitle}) => {
                                             </TableCell>
                                         );
                                     })}
-                                    {localStorage.getItem('jwt').length > 7 &&
+                                    {isAuthenticated &&
                                     <TableCell key="addJournal" align="right">
                                         <AddJournalToGroup journalId={row.id}/>
                                     </TableCell>

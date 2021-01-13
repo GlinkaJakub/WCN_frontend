@@ -2,10 +2,10 @@ import React, {useState} from 'react';
 import {makeStyles} from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Avatar from "@material-ui/core/Avatar";
-import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
+import LockTwoToneIcon from '@material-ui/icons/LockTwoTone';
 import Typography from "@material-ui/core/Typography";
 import {Formik} from "formik";
-import {AddGroupRequest} from "../request";
+import {changePassword} from "../request";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -32,31 +32,38 @@ const useStyles = makeStyles((theme) => ({
         },
 }));
 
-const AddGroup = () => {
+const ChangePassword = ({isAuthenticated}) => {
 
     const classes = useStyles();
     const history = useHistory();
+    const [errorMessage, setErrorMessage] = useState('');
 
     return(
         <Container consponent="main" maxWidth="xs">
             <CssBaseline/>
             <div className={classes.paper}>
                 <Avatar className={classes.avatar}>
-                    <PlaylistAddIcon/>
+                    <LockTwoToneIcon/>
                 </Avatar>
                 <Typography component="h1" variant='h5'>
-                    Dodaj nową grupę
+                    Zmień hasło
                 </Typography>
                 <Formik
-                    initialValues={{id: 0, name: ''}}
+                    initialValues={{
+                        oldPassword: '',
+                        newPassword: '',
+                        confirmPassword: '',
+                    }}
                     validate={values => {
                         const errors = {};
-                        if (!values.name) {
-                            errors.name = 'Required';
-                        } else if (
-                            !/^[^%]{3,}$/i.test(values.name)
-                        ) {
-                            errors.name = 'Invalid group name: min 3 characters';
+                        if (!values.oldPassword) {
+                            errors.oldPassword = 'Required';
+                        }
+                        if (!values.newPassword) {
+                            errors.newPassword = 'Required';
+                        }
+                        if (values.newPassword !== values.confirmPassword){
+                            errors.confirmPassword = 'Passwords must match'
                         }
                         return errors;
                     }}
@@ -64,8 +71,8 @@ const AddGroup = () => {
                         setTimeout(() => {
                             // alert(JSON.stringify(values, null, 2));
                             setSubmitting(false);
-                            AddGroupRequest(values);
-                            history.push("/groups");
+                            changePassword(values, setErrorMessage);
+                             // history.push("/groups");
                         }, 400);
                     }}
                 >
@@ -85,17 +92,50 @@ const AddGroup = () => {
                                 margin="normal"
                                 required
                                 fullWidth
-                                id="name"
-                                label="Nazwa Grupy"
+                                id="oldPassword"
+                                label="Aktualne hasło"
                                 autoComplete="name"
                                 autoFocus
-                                type="text"
-                                name="name"
+                                type="password"
+                                name="oldPassword"
                                 onChange={handleChange}
                                 onBlur={handleBlur}
-                                value={values.name}
+                                value={values.oldPassword}
                             />
-                            {errors.name && touched.name && errors.name}
+                            {errors.oldPassword && touched.oldPassword && errors.oldPassword}
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="newPassword"
+                                label="Nowe hasło"
+                                autoComplete="name"
+                                type="password"
+                                name="newPassword"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={values.newPassword}
+                            />
+                            {errors.newPassword && touched.newPassword && errors.newPassword}
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="confirmPassword"
+                                label="Nowe hasło"
+                                autoComplete="confirmPassword"
+                                type="password"
+                                name="confirmPassword"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={values.confirmPassword}
+                            />
+                            {errors.confirmPassword && touched.confirmPassword && errors.confirmPassword}
+                            <Typography>
+                                {errorMessage}
+                            </Typography>
                             <Button
                                 type="submit"
                                 disabled={isSubmitting}
@@ -104,7 +144,7 @@ const AddGroup = () => {
                                 color="primary"
                                 className={classes.submit}
                             >
-                                Utwórz grupę
+                                Zmień hasło
                             </Button>
                         </form>
                     )}
@@ -114,4 +154,4 @@ const AddGroup = () => {
     );
 }
 
-export default AddGroup;
+export default ChangePassword;

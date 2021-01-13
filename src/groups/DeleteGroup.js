@@ -7,9 +7,9 @@ import {
     DialogTitle,
     makeStyles
 } from "@material-ui/core";
-import {getSimpleGroupsByUser, deleteGroup} from "../../request";
+import {getSimpleGroupsByUser, deleteGroup} from "../request";
 
-const DeleteGroup = ({groupId}) => {
+const DeleteGroup = ({groupId, setChanged}) => {
 
     const useStyles = makeStyles((theme) => ({
         submit:
@@ -19,6 +19,9 @@ const DeleteGroup = ({groupId}) => {
         formControl: {
             margin: theme.spacing(1),
             minWidth: 120,
+        },
+        menuButton: {
+            marginRight: theme.spacing(2),
         },
     }));
 
@@ -38,13 +41,14 @@ const DeleteGroup = ({groupId}) => {
 
     const handleDeleteGroupClose = (groupId) => {
         console.log("Usuwanie grupy ", groupId);
-        deleteGroup(groupId);
+        deleteGroup(groupId, setChanged);
+        setChanged(false);
         setOpen(false);
     }
 
     return (
         <Box>
-            <Button color="primary" onClick={() => handleOpen()}>
+            <Button className={classes.menuButton} variant="outlined" color="primary" onClick={() => handleOpen()}>
                 Usuń grupę
             </Button>
             <Dialog open={open} onClose={() => handleClose()} aria-labelledby="form-dialog-title">

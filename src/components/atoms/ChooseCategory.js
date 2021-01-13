@@ -1,11 +1,11 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import MenuItem from '@material-ui/core/MenuItem';
-import {FormControl, InputLabel, makeStyles, NativeSelect, Select} from "@material-ui/core";
-import {getAllCategories, getAllJournalsByCategory} from "../../request";
-import {Formik, useFormik} from "formik";
+// import MenuItem from '@material-ui/core/MenuItem';
+import {FormControl, InputLabel, makeStyles, NativeSelect} from "@material-ui/core";
+import {getAllCategories} from "../../request";
+import {Formik} from "formik";
 
-import { getSearchingJournals } from "../../request";
+// import { getSearchingJournals } from "../../request";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -27,10 +27,10 @@ const useStyles = makeStyles((theme) => ({
             margin: theme.spacing(3, 0, 2),
         },
     search: {
-        marginLeft: theme.spacing(2),
+        marginLeft: theme.spacing(3),
     },
     formControl: {
-        margin: theme.spacing(1),
+        margin: theme.spacing(2),
         minWidth: 120,
     },
     selectEmpty: {
@@ -49,9 +49,9 @@ const ChooseCategory = ({page, sortColumn, direction, setFetchedData, setSearchW
         getAllCategories(setCategoriesData);
     }, []);
 
-    const handleChange = (id) => {
-        setCategoryId(id);
-    };
+    // const handleChange = (id) => {
+    //     setCategoryId(id);
+    // };
 
     return (
         <Formik
@@ -64,6 +64,10 @@ const ChooseCategory = ({page, sortColumn, direction, setFetchedData, setSearchW
                     // handleChange(values.categoryId);
                     setCategoryId(values.categoryId);
                     console.log(categoryId)
+                    if (categoryId === ""){
+                        setIsCategory(0);
+                        console.log("Ups");
+                    }
                     // getAllJournalsByCategory({page, sortColumn, direction, setFetchedData}, values.categoryId, setSearchWord);
                 }, 400);
             }}

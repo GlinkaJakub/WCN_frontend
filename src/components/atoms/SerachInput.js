@@ -1,12 +1,12 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import CssBaseline from "@material-ui/core/CssBaseline";
+// import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import {makeStyles} from "@material-ui/core";
-import Container from "@material-ui/core/Container";
-import {Formik, useFormik} from "formik";
+// import Container from "@material-ui/core/Container";
+import {Formik} from "formik";
 
-import { getSearchingJournals } from "../../request";
+// import { getSearchingJournals } from "../../request";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -25,7 +25,8 @@ const useStyles = makeStyles((theme) => ({
     },
     submit:
         {
-            margin: theme.spacing(3, 0, 2),
+            marginLeft: theme.spacing(2),
+            marginTop: theme.spacing(1),
         },
     search: {
         marginLeft: theme.spacing(2),
@@ -41,9 +42,7 @@ const SearchInput = ({page, sortColumn, direction, setFetchedData, setSearchWord
             onSubmit={((values, {setSubmitting}) => {
                 setTimeout(() => {
                     setIsCategory(0);
-                    console.log(values.search);
                     setSearchWord(values.search);
-                    console.log("isCat in search ", isCategory);
                     // getSearchingJournals({page, sortColumn, direction, setFetchedData}, values.search);
                     setSubmitting(false);
                 })
@@ -53,6 +52,7 @@ const SearchInput = ({page, sortColumn, direction, setFetchedData, setSearchWord
             <form onSubmit={formik.handleSubmit}>
                 {/*<label htmlFor="search"></label>*/}
                 <TextField
+                    className={classes.search}
                     id="search"
                     name="search"
                     type="text"
@@ -61,6 +61,7 @@ const SearchInput = ({page, sortColumn, direction, setFetchedData, setSearchWord
                     label="Wpisz frazę..."
                 />
                 <Button
+                    className={classes.submit}
                     variant="outlined"
                     type="submit"
                     color="primary"

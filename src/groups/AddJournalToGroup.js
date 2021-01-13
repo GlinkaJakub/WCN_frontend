@@ -7,12 +7,10 @@ import {
     DialogTitle, FormControl, InputLabel,
     makeStyles, NativeSelect
 } from "@material-ui/core";
-import { deleteUserFromGroup} from "../../request";
+import { getSimpleGroupsByUser, addJournalToGroup } from "../request";
 import {Formik} from "formik";
 
-const DeleteUserFromGroup = ({users, groupId}) => {
-
-    console.log(users);
+const AddJournalToGroup = ({journalId}) => {
 
     const useStyles = makeStyles((theme) => ({
         submit:
@@ -28,36 +26,39 @@ const DeleteUserFromGroup = ({users, groupId}) => {
     const classes = useStyles();
 
     const [open, setOpen] = React.useState(false);
+    const [groups, setGroups] = React.useState([]);
 
     const handleOpen = () => {
         setOpen(true);
+        getSimpleGroupsByUser(setGroups);
+
     }
 
     const handleClose = () => {
         setOpen(false);
     }
 
-    const handleDeleteUserClose = (userId) => {
-        console.log("Usuwanie ", userId, " z grupy ", groupId);
-        deleteUserFromGroup(groupId, userId);
+    const handleAddJournalClose = (groupId, journalId) => {
+        console.log("Usuwanie ", journalId, " z grupy ", groupId);
+        addJournalToGroup(groupId, journalId);
         setOpen(false);
     }
 
     return (
         <Box>
             <Button color="primary" onClick={() => handleOpen()}>
-                Usuń użytkownika
+                +
             </Button>
             <Dialog open={open} onClose={() => handleClose()} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Usuń użytkownika</DialogTitle>
+                <DialogTitle id="form-dialog-title">Dodaj czasopismo</DialogTitle>
                 <DialogContent>
                     <Formik
-                        initialValues={{userId: 0}}
+                        initialValues={{groupId: 0}}
                         onSubmit={(values, {setSubmitting}) => {
                             setTimeout(() => {
                                 setSubmitting(false);
                                 console.log(values)
-                                handleDeleteUserClose(values.userId, groupId);
+                                handleAddJournalClose(values.groupId, journalId);
                             }, 400);
                         }}
                     >
@@ -74,21 +75,20 @@ const DeleteUserFromGroup = ({users, groupId}) => {
                             <form onSubmit={handleSubmit}>
 
                                 <FormControl className={classes.formControl}>
-                                    <InputLabel htmlFor="email-native-simple">Email</InputLabel>
+                                    <InputLabel htmlFor="group-native-simple">Grupa</InputLabel>
                                     <NativeSelect
-                                        value={values.userId}
+                                        value={values.groupId}
                                         onChange={handleChange}
                                         inputProps={{
-                                            name: 'userId',
-                                            id: 'email-native-simple',
+                                            name: 'groupId',
+                                            id: 'group-native-simple',
                                         }}
                                     >
                                         <option aria-label="None" value=""/>
-                                        {users.length > 0 && users.map((user) => {
+                                        {groups.length > 0 && groups.map((group) => {
                                             return (
-                                                user.email !== localStorage.getItem('user') &&
-                                                <option value={user.id} key={user.id}>
-                                                    {user.email}
+                                                <option value={group.id} key={group.id}>
+                                                    {group.name}
                                                 </option>
                                             )
                                         })}
@@ -103,7 +103,7 @@ const DeleteUserFromGroup = ({users, groupId}) => {
                                     color="primary"
                                     className={classes.submit}
                                 >
-                                    Usuń
+                                    Dodaj
                                 </Button>
                                 <Button onClick={() => handleClose()}>
                                     Anuluj
@@ -116,4 +116,4 @@ const DeleteUserFromGroup = ({users, groupId}) => {
         </Box>
     );
 }
-export default DeleteUserFromGroup;
+export default AddJournalToGroup;

@@ -7,10 +7,10 @@ import {
     DialogTitle, FormControl, InputLabel,
     makeStyles, NativeSelect
 } from "@material-ui/core";
-import { getSimpleGroupsByUser, addJournalToGroup } from "../../request";
+import { deleteUserFromGroup} from "../request";
 import {Formik} from "formik";
 
-const AddJournalToGroup = ({journalId}) => {
+const DeleteUserFromGroup = ({users, groupId, setChanged}) => {
 
     const useStyles = makeStyles((theme) => ({
         submit:
@@ -21,44 +21,45 @@ const AddJournalToGroup = ({journalId}) => {
             margin: theme.spacing(1),
             minWidth: 120,
         },
+        menuButton: {
+            marginRight: theme.spacing(2),
+        },
     }));
 
     const classes = useStyles();
 
     const [open, setOpen] = React.useState(false);
-    const [groups, setGroups] = React.useState([]);
 
     const handleOpen = () => {
         setOpen(true);
-        getSimpleGroupsByUser(setGroups);
-
     }
 
     const handleClose = () => {
         setOpen(false);
     }
 
-    const handleAddJournalClose = (groupId, journalId) => {
-        console.log("Usuwanie ", journalId, " z grupy ", groupId);
-        addJournalToGroup(groupId, journalId);
+    const handleDeleteUserClose = (userId) => {
+        console.log("Usuwanie ", userId, " z grupy ", groupId);
+        // setChanged(true);
+        deleteUserFromGroup(groupId, userId, setChanged);
         setOpen(false);
     }
 
     return (
         <Box>
-            <Button color="primary" onClick={() => handleOpen()}>
-                +
+            <Button className={classes.menuButton} variant="outlined" color="primary" onClick={() => handleOpen()}>
+                Usuń użytkownika
             </Button>
             <Dialog open={open} onClose={() => handleClose()} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Dodaj czasopismo</DialogTitle>
+                <DialogTitle id="form-dialog-title">Usuń użytkownika</DialogTitle>
                 <DialogContent>
                     <Formik
-                        initialValues={{groupId: 0}}
+                        initialValues={{userId: 0}}
                         onSubmit={(values, {setSubmitting}) => {
                             setTimeout(() => {
                                 setSubmitting(false);
                                 console.log(values)
-                                handleAddJournalClose(values.groupId, journalId);
+                                handleDeleteUserClose(values.userId, groupId);
                             }, 400);
                         }}
                     >
@@ -75,20 +76,21 @@ const AddJournalToGroup = ({journalId}) => {
                             <form onSubmit={handleSubmit}>
 
                                 <FormControl className={classes.formControl}>
-                                    <InputLabel htmlFor="group-native-simple">Grupa</InputLabel>
+                                    <InputLabel htmlFor="email-native-simple">Email</InputLabel>
                                     <NativeSelect
-                                        value={values.groupId}
+                                        value={values.userId}
                                         onChange={handleChange}
                                         inputProps={{
-                                            name: 'groupId',
-                                            id: 'group-native-simple',
+                                            name: 'userId',
+                                            id: 'email-native-simple',
                                         }}
                                     >
                                         <option aria-label="None" value=""/>
-                                        {groups.length > 0 && groups.map((group) => {
+                                        {users.length > 0 && users.map((user) => {
                                             return (
-                                                <option value={group.id} key={group.id}>
-                                                    {group.name}
+                                                user.email !== localStorage.getItem('user') &&
+                                                <option value={user.id} key={user.id}>
+                                                    {user.email}
                                                 </option>
                                             )
                                         })}
@@ -103,7 +105,7 @@ const AddJournalToGroup = ({journalId}) => {
                                     color="primary"
                                     className={classes.submit}
                                 >
-                                    Dodaj
+                                    Usuń
                                 </Button>
                                 <Button onClick={() => handleClose()}>
                                     Anuluj
@@ -116,4 +118,4 @@ const AddJournalToGroup = ({journalId}) => {
         </Box>
     );
 }
-export default AddJournalToGroup;
+export default DeleteUserFromGroup;
